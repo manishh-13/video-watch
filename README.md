@@ -4,9 +4,9 @@
 
 **An Agent Skill that lets Claude watch videos.**
 
-[![video-watch launch video: Claude fact-checks the Apollo 11 moonwalk](docs/brag.jpg)](docs/brag.mp4)
+[![video-watch launch video: Claude fact-checks the Apollo 11 moonwalk](docs/preview.gif)](docs/brag.mp4)
 
-<sub>Click to play the 20-second demo. Footage: NASA, Apollo 11 (public domain, via Wikimedia Commons).</sub>
+<sub>Click for the full video with sound. Footage: NASA, Apollo 11 (public domain, via Wikimedia Commons).</sub>
 
 Claude can read images and text but cannot play video. This skill bridges the gap: share any video, a link from anywhere on the internet or a file on your machine, and ask anything about it.
 
