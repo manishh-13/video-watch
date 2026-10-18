@@ -8,7 +8,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v7
-      - uses: astral-sh/setup-uv@v10
+      - uses: astral-sh/setup-uv@v10.3.0
       - name: Validate SKILL.md against the Agent Skills spec
         run: uvx --from skills-ref agentskills validate skills/video-watch
       - name: Offline smoke test
