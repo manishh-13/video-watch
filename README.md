@@ -5,10 +5,10 @@
 
 **An Agent Skill that lets Claude watch videos.**
 
-Claude can read images and text but cannot play video. This skill bridges the gap: paste a reel, Short, TikTok or YouTube link (or a local file) and ask anything about it.
+Claude can read images and text but cannot play video. This skill bridges the gap: share any video, a link from anywhere on the internet or a file on your machine, and ask anything about it.
 
 > "Is this video real?"
-> "What actually happens in this reel?"
+> "What actually happens in this video?"
 > "Break this ad down shot by shot so I can make one like it."
 
 ## How it works

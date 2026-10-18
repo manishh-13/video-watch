@@ -8,7 +8,7 @@
   "plugins": [
     {
       "name": "video-watch",
-      "description": "Watch, summarise, fact-check or break down as an ad reference any video (reels, YouTube, TikTok, local files) using ffmpeg frames, contact sheets and a Whisper transcript.",
+      "description": "Watch, summarise, fact-check or break down as an ad reference any shareable video (any link on the internet or a local file) using ffmpeg frames, contact sheets and a Whisper transcript.",
       "source": "./",
       "strict": false,
       "skills": ["./skills/video-watch"],
