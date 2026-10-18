@@ -16,7 +16,7 @@ REPORT="$(uv run --script "$HERE/skills/video-watch/scripts/watch.py" "$OUT/clip
 fail() { echo "FAIL: $1"; cat "$REPORT" 2>/dev/null; exit 1; }
 [ -f "$REPORT" ] || fail "no report.md"
 grep -q "Duration: 9" "$REPORT" || fail "duration"
-grep -q "Scene cuts: 2 " "$REPORT" || fail "expected 2 scene cuts"
+grep -q "Shot changes: 2 " "$REPORT" || fail "expected 2 shot changes"
 grep -q "Audio: yes" "$REPORT" || fail "audio track"
 [ "$(ls "$OUT/digest/frames" | wc -l)" -ge 5 ] || fail "too few frames"
 [ -f "$OUT/digest/sheets/sheet_01.jpg" ] || fail "no contact sheet"

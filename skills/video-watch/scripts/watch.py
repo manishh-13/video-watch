@@ -69,6 +69,18 @@ def scene_times(ff, video, thresh, start, end):
     return [start + float(x) for x in re.findall(r"pts_time:([\d.]+)", r.stderr)]
 
 
+def group_cuts(scenes, gap=0.5):
+    """A wipe or flash shows up as several 'cuts' a few frames apart. Group them
+    into one shot change: (first, last) per group."""
+    groups = []
+    for t in scenes:
+        if groups and t - groups[-1][1] < gap:
+            groups[-1][1] = t
+        else:
+            groups.append([t, t])
+    return [tuple(g) for g in groups]
+
+
 def pick_times(start, end, scenes, max_frames):
     """Always include 0s, the first 3s (the hook), every scene cut, and an even
     grid; then thin to max_frames while keeping spread."""
@@ -76,7 +88,10 @@ def pick_times(start, end, scenes, max_frames):
     even_n = max(4, min(max_frames, int(span / 2) + 1))
     even = [start + span * i / even_n for i in range(even_n)]
     hook = [start + t for t in (0.0, 1.0, 2.0, 3.0) if t < span]
-    cand = sorted(set(round(t, 2) for t in hook + scenes + even if start <= t < end - 0.05))
+    # Sample each shot 0.3 s after its transition ends, so the frame shows the
+    # settled new shot instead of a half-finished wipe.
+    shots = [min(last + 0.3, end - 0.1) for _, last in group_cuts(scenes)]
+    cand = sorted(set(round(t, 2) for t in hook + shots + even if start <= t < end - 0.05))
     picked = []
     for t in cand:  # drop near-duplicates
         if not picked or t - picked[-1] >= 0.4:
@@ -136,7 +151,10 @@ def transcribe(ff, video, out, model):
     from faster_whisper import WhisperModel
     m = WhisperModel(model, device="cpu", compute_type="int8")
     segs, info = m.transcribe(audio, vad_filter=True)
-    lines = [f"[{fmt(s.start)} -> {fmt(s.end)}] {s.text.strip()}" for s in segs]
+    # Whisper invents words over music or silence ("You", "Thank you"). Drop
+    # segments it is itself unsure contain speech.
+    lines = [f"[{fmt(s.start)} -> {fmt(s.end)}] {s.text.strip()}" for s in segs
+             if s.no_speech_prob < 0.6 and s.avg_logprob > -1.0 and s.text.strip()]
     return lines, info.language
 
 
@@ -176,12 +194,14 @@ def main():
     if lines is not None:
         (out / "transcript.txt").write_text("\n".join(lines) or "(no speech detected)")
 
-    cps = len(scenes) / (end - start) if end > start else 0
+    shots = group_cuts(scenes)
+    cps = len(shots) / (end - start) if end > start else 0
     r = [f"# Video digest: {meta.get('title', video.name)}", "",
          f"- Video file: {video}",
          f"- Duration: {dur:.1f}s | Resolution: {res[0]}x{res[1] if res else '?'}" if res else f"- Duration: {dur:.1f}s",
          f"- Window analysed: {fmt(start)} to {fmt(end)}",
-         f"- Scene cuts: {len(scenes)} ({cps:.2f} cuts/s) at: " + (", ".join(fmt(t) for t in scenes[:60]) if scenes else "none (single continuous shot)"),
+         f"- Shot changes: {len(shots)} ({cps:.2f}/s; {len(scenes)} raw cuts, a wipe counts once) at: "
+         + (", ".join(fmt(a) for a, _ in shots[:60]) if shots else "none (single continuous shot)"),
          f"- Audio: {'yes' if has_audio else 'none'}" + (f", speech language: {lang}" if lang else ""),
          f"- Frames: {len(frames)} in {out / 'frames'}",
          "- Contact sheets (view these first, labels are #frame mm:ss):"]

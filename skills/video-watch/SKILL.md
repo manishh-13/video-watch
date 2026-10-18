@@ -16,7 +16,7 @@ You cannot play video, but you can read images and text. `scripts/watch.py` conv
 - **contact sheets**: 3x3 grids, each tile labelled `#frame mm:ss` (one image = 9 moments, cheap to view)
 - **transcript** with timestamps (local Whisper, any language)
 - **metadata**: uploader, upload date, views, caption/description, tags
-- **report.md** tying it together, plus cut times and cuts per second
+- **report.md** tying it together, plus shot-change times and shot changes per second
 
 ## 1. Digest the video
 
@@ -73,7 +73,7 @@ Give a verdict per claim (True / Misleading / False / Unverifiable) and an overa
 Break it into something the user can reproduce:
 - **Hook (0 to 3 s)**: what grabs attention, first line spoken, first text overlay
 - **Shot list**: table of time | shot (framing, subject, action) | on-screen text | audio/VO
-- **Pacing**: cuts per second (from report.md), where the rhythm speeds up or slows
+- **Pacing**: shot changes per second (from report.md), where the rhythm speeds up or slows
 - **Structure**: problem, agitation, demo/proof, offer, CTA, and where each lands in time
 - **Style**: aspect ratio, lighting, colour, caption style, music/sound, UGC vs produced
 - **Why it works** and **how to adapt it** for the user's product, as a concrete beat-by-beat script

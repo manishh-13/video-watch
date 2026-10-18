@@ -33,7 +33,7 @@ flowchart LR
 | `frames/` | Stills at the first 3 s (the hook), every scene cut and an even grid, file names carry the timestamp |
 | `sheets/` | 3x3 contact sheets labelled `#frame mm:ss`, so one image shows 9 moments |
 | `transcript.txt` | Speech with timestamps, any language (local faster-whisper, nothing leaves your machine) |
-| `report.md` | Duration, cut times, cuts per second, uploader, upload date, caption, transcript |
+| `report.md` | Duration, shot changes and their rate, uploader, upload date, caption, transcript |
 
 The skill then tells Claude how to use it for three jobs:
 
