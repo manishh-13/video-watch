@@ -1,0 +1,22 @@
+{
+  "name": "video-watch",
+  "owner": { "name": "manishh-13" },
+  "metadata": {
+    "description": "Let Claude watch videos: frames, contact sheets, transcript and metadata from any video link or file.",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "video-watch",
+      "description": "Watch, summarise, fact-check or break down as an ad reference any video (reels, YouTube, TikTok, local files) using ffmpeg frames, contact sheets and a Whisper transcript.",
+      "source": "./",
+      "strict": false,
+      "skills": ["./skills/video-watch"],
+      "author": { "name": "manishh-13" },
+      "homepage": "https://github.com/manishh-13/video-watch",
+      "license": "MIT",
+      "keywords": ["video", "ffmpeg", "whisper", "fact-check", "ads", "reels"],
+      "category": "productivity"
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+name: test
+on: [push, pull_request]
+jobs:
+  smoke:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - name: Validate SKILL.md against the Agent Skills spec
+        run: uvx --from skills-ref agentskills validate skills/video-watch
+      - name: Offline smoke test
+        run: bash tests/test_watch.sh
