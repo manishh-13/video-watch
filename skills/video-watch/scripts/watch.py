@@ -102,6 +102,28 @@ def pick_times(start, end, scenes, max_frames):
     return picked
 
 
+def settle(ff, video, t, limit, span=0.8, step=0.1, still=1.5):
+    """Move t forward to the first moment the picture stops changing (end of a
+    wipe, zoom or flash). Reads tiny greyscale frames, so it is cheap. Never
+    moves past limit (the next shot change)."""
+    span = min(span, limit - t)
+    if span < step * 2:
+        return t
+    w, h = 48, 27
+    r = subprocess.run([ff, "-hide_banner", "-loglevel", "error", "-ss", f"{t}", "-t", f"{span}",
+                        "-i", str(video), "-vf", f"fps={1/step},scale={w}:{h},format=gray",
+                        "-f", "rawvideo", "-"], capture_output=True)
+    n = len(r.stdout) // (w * h)
+    if n < 2:
+        return t
+    fr = [r.stdout[i * w * h:(i + 1) * w * h] for i in range(n)]
+    diffs = [sum(abs(a - b) for a, b in zip(fr[i], fr[i + 1])) / (w * h) for i in range(n - 1)]
+    for i, d in enumerate(diffs):
+        if d < still:
+            return round(t + i * step, 2)
+    return round(t + diffs.index(min(diffs)) * step, 2)
+
+
 def grab(ff, video, times, fdir):
     files = []
     for i, t in enumerate(times):
@@ -183,6 +205,9 @@ def main():
     print(f"2/4 detecting scene cuts ({fmt(start)} to {fmt(end)} of {dur:.1f}s)...", file=sys.stderr)
     scenes = scene_times(ff, video, a.scene, start, end)
     times = pick_times(start, end, scenes, a.max_frames)
+    starts = [a for a, _ in group_cuts(scenes)] + [end]
+    times = sorted(set(t if t == start else settle(ff, video, t, min(x for x in starts if x > t) - 0.05)
+                       for t in times))
     frames = grab(ff, video, times, out / "frames")
     print(f"3/4 {len(frames)} frames, building contact sheets...", file=sys.stderr)
     sh = sheets(frames, out / "sheets") if frames else []
